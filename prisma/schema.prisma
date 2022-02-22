@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,7 +20,7 @@ model Post {
   title       String
   published   DateTime @default(now())
   author      User     @relation(fields: [authorId], references: [id])
-  authorId    Int
+  authorId    Int      @map("author_id")
   source      String
   category    String
   description String

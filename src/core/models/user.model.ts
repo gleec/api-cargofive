@@ -1,3 +1,4 @@
+import { CreateUserDto } from '../dtos';
 import { Post } from './post.model';
 
 export class User {
@@ -5,5 +6,8 @@ export class User {
   name: string;
   password: string;
   email: string;
-  posts: Post[];
+
+  constructor(partial?: Partial<CreateUserDto>) {
+    Object.assign(this, partial);
+  }
 }
