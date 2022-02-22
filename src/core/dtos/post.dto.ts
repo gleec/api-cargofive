@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsDateString, IsNumber } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
 export class CreatePostDto {
@@ -8,11 +8,10 @@ export class CreatePostDto {
 
   @IsDateString()
   @IsNotEmpty()
-  published: Date;
+  publishedAt: Date | string;
 
-  @IsString()
-  @IsNotEmpty()
-  author: string;
+  @IsNumber()
+  author: number;
 
   @IsString()
   @IsNotEmpty()

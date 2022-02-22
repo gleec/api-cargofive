@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PostRepository } from 'src/core/abstracts/post-repository.abstract';
-import { Post } from 'src/core/models';
 import { PrismaService } from './prisma.service';
-import { PostQuery } from '../../core/types/post-query.type'
-
+import { Post } from '@core/models';
+import { PostRepository } from '@core/abstracts/post-repository.abstract';
+import { PostQuery } from '@core/dtos';
 
 @Injectable()
 export class PrismaPostRepository implements PostRepository {
@@ -14,8 +13,8 @@ export class PrismaPostRepository implements PostRepository {
     const prismaPost = await this.prisma.post.findMany({
       where: {
         category: query?.category,
-        author: {
-          id: query?.author
+        authorId: {
+          equals: query?.author
         }
       }
     });
@@ -40,7 +39,7 @@ export class PrismaPostRepository implements PostRepository {
           id: data.author
         }
       }
-    }
+    };
     const post = await this.prisma.post.create({
       data: prismaData
     });
@@ -49,14 +48,17 @@ export class PrismaPostRepository implements PostRepository {
   }
 
   async createMany(data: Post[]): Promise<number> {
-    const prismaData: any = data.map(post => ({
-      ...post,
-      author: {
-        connect: {
-          id: post.author
-        }
-      }
-    }))
+    const prismaData: Prisma.PostCreateManyInput[] = data.map((post) => {
+      const { author: authorId, title, category, description, publishedAt, source } = post;
+      return {
+        authorId,
+        title,
+        category,
+        description,
+        publishedAt,
+        source
+      };
+    });
     const payload = await this.prisma.post.createMany({ data: prismaData });
     return payload.count;
   }
@@ -69,7 +71,7 @@ export class PrismaPostRepository implements PostRepository {
           id: data.author
         }
       }
-    }
+    };
     const updatedPost = await this.prisma.post.update({
       data: prismaData,
       where: { id }
@@ -79,7 +81,7 @@ export class PrismaPostRepository implements PostRepository {
 
   async delete(id: number): Promise<Post> {
     const deletedPost = await this.prisma.post.delete({
-      where: { id },
+      where: { id }
     });
     return new Post(deletedPost);
   }

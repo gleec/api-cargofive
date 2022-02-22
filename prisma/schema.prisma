@@ -16,11 +16,11 @@ model User {
 }
 
 model Post {
-  id          Int      @default(autoincrement()) @id
+  id          Int     @default(autoincrement()) @id
   title       String
-  published   DateTime @default(now())
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    Int      @map("author_id")
+  publishedAt String  @map("published_at") 
+  author      User    @relation(fields: [authorId], references: [id])
+  authorId    Int     @map("author_id")
   source      String
   category    String
   description String

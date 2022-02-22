@@ -1,19 +1,24 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/abstracts/user-repository.abstract';
-import { CreateUserDto, UpdateUserDto } from 'src/core/dtos';
-import { User } from 'src/core/models';
+import { UserRepository } from '@core/abstracts/user-repository.abstract';
+import { CreateUserDto, UpdateUserDto } from '@core/dtos';
+import { User } from '@core/models';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
-  signUp(userDto: CreateUserDto): Promise<User> {
-    const userFound = this.userRepository.getByEmail(userDto.email);
+  async signUp(userDto: CreateUserDto): Promise<User> {
+    const userFound = await this.userRepository.getByEmail(userDto.email);
     if (userFound) {
       throw new HttpException('User already exists', HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    const user = new User(userDto);
+    const password = await bcrypt.hash(userDto.password, 10)
+    const user = new User({
+      ...userDto,
+       password
+    });
     return this.userRepository.create(user);
   }
 
@@ -30,6 +35,9 @@ export class UserService {
     return this.userRepository.getById(id);
   }
 
+  getByEmail(email: string): Promise<User> {
+    return this.userRepository.getByEmail(email);
+  }
 
   delete(id: number) {
     return this.userRepository.delete(id);

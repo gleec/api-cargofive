@@ -1,6 +1,6 @@
 import {Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/abstracts/user-repository.abstract';
-import { User } from 'src/core/models';
+import { UserRepository } from '@core/abstracts/user-repository.abstract';
+import { User } from '@core/models';
 import { PrismaService } from './prisma.service';
 
 @Injectable()
@@ -15,7 +15,6 @@ export class PrismaUserRepository implements UserRepository {
 
   async getById(id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({
-      rejectOnNotFound: true,
       where: { id }
     });
 
@@ -24,11 +23,10 @@ export class PrismaUserRepository implements UserRepository {
 
   async getByEmail(email: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
-      rejectOnNotFound: true,
       where: { email }
     });
 
-    return new User(user);
+    return user ? new User(user) : null ;
   }
 
   async create(data: User): Promise<User> {
@@ -52,7 +50,12 @@ export class PrismaUserRepository implements UserRepository {
   async update(id: number, data: User): Promise<User> {
     const updatedUser = await this.prisma.user.update({
       data,
-      where: { id }
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true
+      }
     });
     return new User(updatedUser);
   }

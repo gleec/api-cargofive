@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PostRepository } from 'src/core/abstracts/post-repository.abstract';
-import { CreatePostDto, UpdatePostDto } from 'src/core/dtos';
-import { Post } from 'src/core/models';
-import { PostQuery } from 'src/core/types/post-query.type';
+import { PostRepository } from '@core/abstracts/post-repository.abstract';
+import { CreatePostDto, UpdatePostDto } from '@core/dtos';
+import { Post } from '@core/models';
+import { PostQuery } from '@core/dtos';
 import { ScraperService } from './scraper.service';
 
 
@@ -35,9 +35,13 @@ export class PostService {
     return this.postRepository.delete(id);
   }
 
-  async scrape(category: string): Promise<number>  {
+  async scrape(category: string, author: number): Promise<number>  {
     const scrapedPosts = await this.scraperService.scrapePosts(category);
-    const posts = scrapedPosts.map(post => new Post(post));
+    const posts = scrapedPosts.map(post => new Post({
+      ...post,
+      author,
+    }));
+
     return this.postRepository.createMany(posts);
   }
 }

@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from 'src/core/dtos';
-import { UserService } from 'src/services/user/user-service.service';
+import { CreateUserDto, UpdateUserDto } from '@core/dtos';
+import { UserService } from '@services/user/user-service.service';
 
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post()
+  @Post('signup')
   signUp(@Body() user: CreateUserDto) {
     return this.userService.signUp(user);
   }

@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe, Query } from '@nestjs/common';
-import { CreatePostDto, UpdatePostDto } from 'src/core/dtos';
-import { PostQuery } from 'src/core/types/post-query.type';
-import { PostService } from 'src/services/post/post-service.service';
+import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe, Query, Req } from '@nestjs/common';
+import { CreatePostDto, UpdatePostDto, PostQuery } from '@core/dtos';
+import { PostService } from '@services/post/post-service.service';
+import { ScrapePosts } from '@core/dtos/scrape-posts.dto';
 
 @Controller('posts')
 export class PostController {
@@ -33,7 +33,7 @@ export class PostController {
   }
 
   @Post('scrape')
-  scrape(category: string) {
-    return this.postService.scrape(category);
+  scrape(@Req() req, @Body() body: ScrapePosts) {
+    return this.postService.scrape(body.category, req.user.userId);
   }
 }

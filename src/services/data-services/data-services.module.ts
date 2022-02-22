@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UserRepository } from 'src/core/abstracts/user-repository.abstract';
-import { PostRepository } from 'src/core/abstracts/post-repository.abstract';
-import { MemoryPostRepositoryService } from 'src/frameworks/memory/memory-post-repository.service';
-import { PrismaUserRepository } from 'src/frameworks/prisma/prisma-user-repository.service';
-import { PrismaModule } from 'src/frameworks/prisma/prisma.module';
+import { UserRepository } from '@core/abstracts/user-repository.abstract';
+import { PostRepository } from '@core/abstracts/post-repository.abstract';
+import { PrismaModule } from '@frameworks/prisma/prisma.module';
+import { PrismaUserRepository } from '@frameworks/prisma/prisma-user-repository.service';
+import { PrismaPostRepository } from '@frameworks/prisma/prisma-post-repository.service';
 
 @Module({
   imports: [PrismaModule],
@@ -14,7 +14,7 @@ import { PrismaModule } from 'src/frameworks/prisma/prisma.module';
     },
     {
       provide: PostRepository,
-      useClass: MemoryPostRepositoryService
+      useClass: PrismaPostRepository
     }
   ],
   exports: [UserRepository, PostRepository]
